@@ -1,0 +1,171 @@
+{%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
+<div class="page-width">
+  {%- if section.settings.headline != blank -%}
+    <div class="section-header">
+      <h2 class="section-header__title">{{ section.settings.headline }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="scrollbox section_{{ section.id }}">
+    {% for block in section.blocks %}
+      {% if forloop.last == true %}
+        {% capture blockCount %}
+          {{ forloop.index }}
+        {% endcapture %}
+        {% assign blockCount = blockCount | plus:0 %}
+      {% endif %}
+    {% endfor %}
+    {% if blockCount > 5 %}
+      <button class="scrollbox__arrow--back js:scrollArrowButtons" 
+        data-scroll-direction="0" 
+        data-scroll-container="section_{{ section.id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </button>
+    {% endif %}
+    {%- for block in section.blocks -%}
+      <div class="scrollbox__item">
+        <a href="{{ block.settings.url }}">
+
+          <div class="image-wrap" style="height: 0; padding-bottom: {{ 100 | divided_by: block.settings.image.aspect_ratio }}%;">
+            {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <img class="lazyload" 
+              role="presentation"
+              data-src="{{ img_url }}"
+              data-widths="[540]"
+              data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+              data-sizes="auto"
+              alt="{{ block.settings.image.alt }}">
+            <noscript>
+              <img class="lazyloaded" 
+                src="{{ block.settings.image | img_url: '400x' }}" 
+                alt="{{ block.settings.image.alt }}">
+            </noscript>
+          </div>
+
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.body }}</p>
+        </a>
+      </div>
+    {%- endfor -%}
+    {% if blockCount > 5 %}
+      <button class="scrollbox__arrow--next js:scrollArrowButtons" 
+        data-scroll-direction="1" 
+        data-scroll-container="section_{{ section.id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+    {% endif %}
+  </div>
+
+</div>
+{%- if section.settings.divider -%}</div>{%- endif -%}
+
+{% javascript %}
+  // scroll container horizontally
+  function scrollHorizontally(element, direction) {
+
+    if (direction == 0) {
+      element.scroll({
+        left: element.scrollLeft - 350,
+        behavior: 'smooth'
+      })
+    }
+    else {
+      element.scroll({
+        left: element.scrollLeft + 350,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+
+  // listen for click on scroll arrows
+  var scrollArrowButtons = document.getElementsByClassName("js:scrollArrowButtons");
+  Array.from(scrollArrowButtons).forEach(function(scrollArrowButton) {
+    scrollArrowButton.addEventListener('click', function(e){
+      let scrollContainerClass = this.getAttribute('data-scroll-container');
+      let scrollDirection = this.getAttribute('data-scroll-direction');
+      var scrollContainers = document.getElementsByClassName(scrollContainerClass);
+      Array.from(scrollContainers).forEach(function(scrollContainer) {
+        scrollHorizontally(scrollContainer, scrollDirection);
+      });
+    });
+  });
+
+  /*
+  //Hide scroll arrows if number of items is less than 5
+  var scrollItemLength = document.querySelectorAll(".section__scrollbox, .scrollbox__item").length;
+  if (scrollItemLength < 5) {
+    for (var i = 0; i < scrollItemLength; i++) {
+      //console.log(scrollArrowButtons[i]);
+      scrollArrowButtons[i].style.visibility = "hidden";
+      //scrollArrowButtons[i].style.display = "none";
+    }
+  }
+  */
+{% endjavascript %}
+
+{%- comment -%}
+// set scroll to start
+console.log("scrollbox");
+setTimeout(function(){
+  var scrollContainers = document.getElementsByClassName("scrollbox");
+  Array.from(scrollContainers).forEach(function(scrollContainer) {
+    console.log(scrollContainer);
+    scrollContainer.scroll({
+      left: -3000
+    })
+  });
+}, 3000);
+{%- endcomment -%}
+
+{% schema %}
+{
+  "name": "Scrolling cards",
+  "class": "section__scrollbox",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "Show section divider",
+      "default": false
+    },
+    {
+      "type": "text",
+      "label": "Headline",
+      "id": "headline"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "label": "Image",
+          "id": "image"
+        },
+        {
+          "type": "url",
+          "label": "URL",
+          "id": "url"
+        },
+        {
+          "type": "text",
+          "label": "Title",
+          "id": "title"
+        },
+        {
+          "type": "text",
+          "label": "Body",
+          "id": "body"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Scrolling cards",
+    "category": "Custom"
+  }]
+}
+{% endschema %}

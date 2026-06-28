@@ -1,0 +1,77 @@
+<div class="index-section">
+  <div class="pdp-explore-container page-width">
+    <h2>EXPLORE</h2>
+    <div class="pdp-explore-inner">
+      <a href="{{ section.settings.featured_page.url }}" class="explore-feature explore-featured-page">
+        <img src="{{ section.settings.featured_page_image | image_url: width: 1200 }}" >
+        <h3 class="featured-page-header">{{ section.settings.featured_page.title }}</h3>
+      </a>
+      <a href="{{ section.settings.featured_article.url }}" class="explore-feature explore-featured-article">
+        <img src="{{ section.settings.featured_article.image | image_url: width: 1200 }}" >
+        <h3 class="featured-article-header">{{ section.settings.featured_article.title }}</h3>
+      </a>
+    </div>
+  </div>
+</div>
+<style>
+  .pdp-explore-container h2{
+    font-size:16px;
+    margin-bottom:24px;
+  }
+  .pdp-explore-inner{
+    display:flex;
+    gap:40px;
+  }
+
+  .pdp-explore-inner img{
+    aspect-ratio: 2 / 1;
+    object-fit:cover;
+  }
+  .explore-feature{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:16px;
+    width:50%;
+  }
+  .explore-feature h3{
+    text-transform:uppercase !important;
+    font-size:16px;
+    text-align:center;
+  }
+  @media screen and (max-width:768px){
+    .pdp-explore-inner{
+      flex-direction:column;
+    }
+    .explore-feature{
+      width:100%;
+     }
+  }
+</style>
+{% schema %}
+{
+  "name": "PDP - Explore",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "featured_page_image",
+      "label": "Featured Page Image"
+    },
+    {
+      "type": "page",
+      "id": "featured_page",
+      "label": "Featured Page"
+    },
+    {
+      "type": "article",
+      "id": "featured_article",
+      "label": "Featured Article"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PDP - Explore"
+    }
+  ]
+}
+{% endschema %}

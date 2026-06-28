@@ -1,0 +1,763 @@
+<section>
+  <div class="comparison-tool-container" >
+    <div class="inner-row">
+      <div class="fin-selector-column table-col">
+        <div class="compare-selector-container">
+          <p class="compare-selector-header">Select Up to 3 Fins to Compare</p>
+          <div class="selector-row selector-headers desktop-only">
+            <span class="fin-model-label" style="width:34%; padding-left:5px;">Model</span>
+            <span style="width:13%"></span>
+            <span class="fin-height-label" style="width:14%">Height</span>
+            <span class="fin-base-label" style="width:14%">Base</span>
+            <span class="fin-area-label" style="width:16%">Area</span>
+            <span style="width:9%"></span>
+          </div>
+          <div class="mobile-dropdown">
+            <div class="dropdown">
+              <button class="dropdown-button mobile-only">Select Fins</button>
+              <div class="dropdown-content">
+                  
+                  <div class="twinzer-fin-selector-container">
+                  {% for block in section.blocks %}
+                    
+                      {%- case block.type -%}
+                        {%- when "fin" -%}
+                    <div class="selector-row twinzer-fin-selector">
+                      <div style="display:none;">
+                        <div class="checkbox">
+                          <input class="twinzer-fin-checkbox" type="checkbox" data-id="{{forloop.index0}}" />
+                        </div>
+                      </div>
+                      
+                      <div class="twinzer-fin-model-container" style="display: flex; width:32%">
+                        <span class="selector-color-container" style="width:10%">
+                          <span class="filled" 
+                            data-id="{{forloop.index0}}"
+                            data-product_name="{{ block.settings.product_name }}"
+                            data-attribute_turns="{{ block.settings.attribute_turns }}"
+                            data-attribute_area="{{ block.settings.attribute_area }}"
+                            data-attribute_speed="{{ block.settings.attribute_speed }}"
+                            data-attribute_flex="{{ block.settings.attribute_flex }}"
+                            style="border-color: {{ block.settings.product_color }}; background-color:{{ block.settings.product_color }}">
+                          </span>
+                        </span>
+                        <span class="twinzer-selection-title" style="width:90%">{{ block.settings.product_name }}</span>
+                      </div>
+                      <span class="front-rear-labels" style="width:13%">Front<br>Rear</span>
+                      <span class="fin-height-data" style="width:14%">{{ block.settings.front_fin_height }}<br>{{ block.settings.rear_fin_height }}</span>
+                      <span class="fin-base-data" style="width:14%">{{ block.settings.front_fin_base }}<br>{{ block.settings.rear_fin_base }}</span>
+                      <span class="fin-area-data" style="width:16%">{{ block.settings.front_fin_area }}<br>{{ block.settings.rear_fin_area }}</span>
+                      <span class="view-fin-button" style="width:11%">
+                        <a href="{{ block.settings.select-product.url }}" target="_blank">
+                          View Fin
+                        </a>
+                      </span>
+                    </div>
+                  {% endcase %}
+                  {% endfor %}
+                </div>
+              </div>
+          </div>
+          </div>
+        </div>
+      </div>
+        <div class="twinzer-chart-column">
+          <h2>Key Features</h2>
+          <p>Side by side feature comparison</p>
+          <div class="twinzer-chart-wrapper">
+            <div style="visibility: hidden;">
+              {% for block in section.blocks %}
+                  <div style="visibility:hidden; height:0; width:0;">
+                      <span class="turns-value">{{ block.settings.attribute_turns }}</span>
+                      <span class="area-value">{{ block.settings.attribute_area }}</span>
+                      <span class="speed-value">{{ block.settings.attribute_speed }}</span>
+                      <span class="flex-value">{{ block.settings.attribute_flex }}</span>
+                    </div>
+                {%  endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="twinzer-graphs-wrapper">
+          <div class="twinzer-main-showcase-wrapper">
+            <div class="main-showcase-container">
+              <div class="main-showcase-compare">
+                  <div class="twinzer-main-showcase-header">
+                    <h2>Front Fin Template</h2>
+                    <p id="comparison-graph-subheading">Fin shape graph</p>
+                  </div>
+                  <div class="twinzer-x-button-container"></div>
+                  {% for block in section.blocks %}
+                    {%- case block.type -%}
+                      {%- when "fin" -%}
+                    <div class="twinzer-fin-shapes twinzer-front-shapes" data-id="{{forloop.index0}}" data-color="{{ block.settings.product_color }}">
+                      <img src="{{ block.settings.front_fin_shape | image_url }}" >
+                    </div>
+                  {% endcase %}
+                {% endfor %}
+                <img src="https://cdn.shopify.com/s/files/1/0339/4613/files/tri-fin-blank-graph-min.png?v=1732256865" >
+              </div>
+            </div>
+          </div>
+          <div class="twinzer-main-showcase-wrapper">
+              <div class="main-showcase-container">
+            <div class="main-showcase-compare">
+                <div class="twinzer-main-showcase-header">
+                  <h2>Rear Fin Template</h2>
+                  <p id="comparison-graph-subheading">Fin shape graph</p>
+                </div>
+                <div class="twinzer-x-button-container"></div>
+                {% for block in section.blocks %}
+                  {%- case block.type -%}
+                    {%- when "fin" -%}
+                  <div class="twinzer-fin-shapes twinzer-rear-shapes" data-id="{{forloop.index0}}" data-color="{{ block.settings.product_color }}">
+                    <img src="{{ block.settings.rear_fin_shape | image_url }}" >
+                  </div>
+                {% endcase %}
+              {% endfor %}
+              <img src="https://cdn.shopify.com/s/files/1/0339/4613/files/tri-fin-blank-graph-min.png?v=1732256865" >
+            </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>
+<style>
+  .twinzer-graphs-wrapper{
+    display:flex;
+    justify-content:space-between;
+  }
+  .main-showcase-container{
+    background:white;
+  }
+  .comparison-tool-container{
+    background:#FAFAFA;
+    padding:24px;
+    /* max-height:600px; */
+    max-width:1400px;
+    margin:auto;
+    margin-bottom:24px;
+  }
+  .compare-selector-header{
+    font-size: 15px;
+    margin-bottom: 0;
+    color:#898989;
+    font-weight:600;
+  }
+  
+  .twinzer-chart-column .chart-container{
+    display:inline-block;
+    margin-right:12px;
+  }
+  .twinzer-x-button-container{
+    margin-left:12px;
+  }
+  .front-rear-labels{
+    color: #898989;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+  }
+  .fin-height-data,
+  .fin-base-data,
+  .fin-area-data,
+  .view-fin-button,
+  .fin-height-label,
+  .fin-base-label,
+  .fin-area-label{
+    text-align:center;
+  }
+  .selector-color-container{
+    /* display: flex;
+    align-items: center; */
+  }
+  .twinzer-fin-selector{
+    cursor:pointer;
+  }
+  .twinzer-fin-selector-container {
+    max-height: 226px;
+    overflow-y: auto; /* Enable vertical scrollbar if content overflows */
+    overflow-x:hidden;
+  }
+  .twinzer-fin-selector-container::-webkit-scrollbar-track {
+    background: transparent; /* Make the scrollbar track transparent */
+  }
+  
+  .table-col-container{
+    overflow-y:auto;
+  }
+  .comparison-tool-container .inner-row{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+  }
+  .comparison-tool-container .fin-selector-column{
+    background:#FAFAFA;
+  }
+  .comparison-tool-container .inner-row .compare-selector-container{
+    display:flex;
+    flex-direction:column;
+  }
+  .comparison-tool-container .inner-row .compare-selector-container .selector-row{
+    width:100%;
+    display:flex;
+  }
+    .comparison-tool-container .inner-row .table-col{
+      width:49.5%;
+      background: #FFFFFF;
+      /* border-radius: 12px; */
+      padding: 10px;
+    } 
+  .comparison-tool-container .inner-row .table-col .selector-headers{
+    font-size: 12px;
+    color: #898989;
+    margin: 16px 0;
+    width:calc(100% - 18px);
+  }
+  .comparison-tool-container .inner-row .table-col .twinzer-fin-selector{
+    font-size:14px;
+    /* border-radius: 5px; */
+    padding: 6px;
+    margin-bottom: 8px;
+    border-color: #D0CFCF;
+    cursor:pointer;
+    align-items:center;
+  }
+  .comparison-tool-container .inner-row .table-col .twinzer-fin-selector:hover{
+    background-color:#FAFAFA;
+  }
+  
+  .comparison-tool-container .inner-row .table-col .twinzer-fin-selector span a{
+    display: flex;
+    align-items: center;
+    font-size:12px;
+    text-align:center;
+    color:grey;
+  }
+  .comparison-tool-container .inner-row .review-chart-column{
+    width:49.5%;
+    /* background: #FAFAFA; */
+    /* border-radius: 8px; */
+    padding: 12px;
+  }
+    .comparison-tool-container .inner-row .states-col{
+      width:74%;
+      display:flex;
+      padding: 12px;
+      background: #FFFFFF;
+      /* border-radius: 12px; */
+    }
+    .comparison-tool-container .inner-row .table-col table {
+      background: transparent;
+  }
+  
+  .comparison-tool-container .inner-row .table-col table td, .comparison-tool-container .inner-row .table-col table th{
+      background: transparent;
+  }
+  .comparison-tool-container .inner-row .table-col table{
+      border: none;
+      border-spacing: 0;
+  }
+  .comparison-tool-container .inner-row .table-col table th{
+      border: none;
+      color: #a5a5a5;
+      font-size: 13px;
+      font-weight: 400;
+      padding: 0.2rem 0.5rem;
+  }
+  .comparison-tool-container .inner-row .table-col table td{
+      border: none;
+      color: #a5a5a5;
+      font-size: 14px;
+      padding: 0.5rem 0.5rem;
+      text-align:
+  }
+  .comparison-tool-container .inner-row .table-col span.filled {
+      width: 10px;
+      height: 10px;
+      border: 1px solid #000;
+      display: inline-block;
+      cursor: pointer;
+      /* border-radius:2px; */
+  }
+  .comparison-tool-container .inner-row .table-col table a{
+    color: #fff;
+  }
+  .comparison-tool-container .inner-row .table-col table span.filled.non-active{
+      background-color: transparent !important;
+  }
+  .twinzer-main-showcase-wrapper{
+    position: relative;
+    aspect-ratio: 6 / 4;
+    margin-top: 0;
+    width: 49.5%;
+    /* background: #fafafa; */
+    /* margin-left: 12px; */
+    /* border-radius: 8px; */
+    padding: 12px 0;
+  }
+  .twinzer-main-showcase-header{
+    padding-left:12px;
+    padding-top:12px
+  }
+  .main-showcase-compare {
+    position: relative;
+  }
+  .main-showcase-compare > img{
+      bottom: 7px;
+      width: 100%;
+  }
+  .main-showcase-compare .twinzer-fin-shapes{
+      max-width: 100%;
+      position: absolute;
+      width: 100%;
+      /* bottom: 0; */
+      display: none;
+      z-index:1
+  }
+  .main-showcase-compare .twinzer-fin-shapes.active{
+    display: block;
+  }
+  .show-stats {
+    margin: 10px 30px 0;
+    margin-bottom: -30px;
+    visibility: hidden;
+  }
+  
+  .show-stats .product_name {
+      font-size: 21px;
+      margin-bottom: 7px;
+  }
+  .show-stats .stats-wrapper{
+      border-radius: 5.396px;
+      background: #fff;
+      filter: drop-shadow(0px 1px 5px rgba(0, 0, 0, .07));
+      max-width: 302px;
+      padding: 18px 21px 1px 21px;
+  }
+  .show-stats .stats-wrapper .single-stats{
+          margin-bottom: 12px;
+  }
+  .show-stats .stats-wrapper .single-stats .stats-bar{
+          width: 100%;
+      background: linear-gradient(90deg, #fedf25, #f69c38 56%, #ee693b);
+      height: 14px;
+      position: relative;
+  }
+  
+  .show-stats .stats-wrapper .single-stats .stats-bar span{
+          position: absolute;
+      height: 100%;
+      background: #000;
+      width: 4px;
+      left: 10%;
+  }
+  .show-stats .stats-wrapper .single-stats .stats-measure{
+      display: flex;
+      justify-content: space-between;
+  }
+  .show-stats .stats-wrapper .single-stats .stats-measure h5{
+      font-size: 11px;
+      margin-top: 5px;
+      margin-bottom: 0px;
+  }
+  .states-col h2{
+    font-size: 22px;
+    /* font-weight: 400 !important; */
+    margin-bottom: 6px;
+  }
+  .states-col h2 + p{
+    font-size:15px;
+    border-bottom: 1px solid #898989;
+    padding-bottom:10px;
+  }
+  .twinzer-chart-container {
+    width: 33%;
+    max-width: 600px;
+    font-size:10px;
+    padding:10px;
+    border: 1px solid #898989;
+    border-radius:0px;
+    /* box-shadow: 0px 4px 9.6px 0px rgba(90, 90, 90, 0.1); */
+    margin-bottom:12px;
+  }
+  .twinzer-chart-container .bar-text{
+    display:flow-root;
+  }
+  .twinzer-chart-container span{
+    color: #898989;
+  }
+  .twinzer-chart-container span.primary-text{
+    font-size:12px;
+    color: #39394a;
+  }
+  
+  .twinzer-chart-container span.text-left{
+    float:left;
+  }
+  .twinzer-chart-container span.text-right{
+    float:right;
+  }
+  
+  .progress-bar {
+      display: flex;
+      align-items: center;
+      margin: 5px 0 0;
+      /* background: linear-gradient(90deg, rgba(90,133,172,1) 0%, rgba(67,86,104,1) 60%, rgba(48,48,48,1) 100%); */
+      /* background:url('https://cdn.shopify.com/s/files/1/0339/4613/files/true-ames-bar-lines-3.png?v=1722845422'); */
+      border:1px solid #898989;
+      background-size:contain;
+      /* border-radius: 12px; */
+      overflow: hidden;
+      position: relative;
+      height: 12px;
+  }
+  
+  .progress-bar .fill {
+      background: transparent;
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s;
+      border-radius: 12px;
+  }
+  #comparison-graph-subheading{
+    margin-right:12px;
+  }
+  #x-button-container{
+    padding:0 12px 16px;
+  }
+  .x-button-box{
+    font-size: 12px;
+    display: inline-block;
+    padding: 3px 6px;
+    /* border-radius: 20px; */
+    background: #f0f0f0;
+    margin-right:6px;
+    margin-bottom: 4px;
+  }
+  .x-out-button{
+    color: #898989;
+    padding: 0 6px 0 8px;
+    cursor:pointer;
+  }
+  .twinzer-x-button-box{
+    font-size: 12px;
+    display: inline-block;
+    padding: 3px 6px;
+    /* border-radius: 20px; */
+    background: #f0f0f0;
+    margin-right:6px;
+    margin-bottom: 4px;
+  }
+  .chart-color-box{
+    height:10px;
+    width:10px;
+    display:inline-block;
+    /* border-radius: 100%; */
+    position: relative;
+    margin-right: 5px;
+  }
+  .twinzer-chart-container h3{
+    display: inline-block;
+    margin-bottom: 0;
+    font-size:14px;
+  }
+  .chart-header{
+    border-bottom: 1px solid rgba(137, 137, 137, 0.3);
+    padding-bottom: 3px;
+    margin-bottom: 8px;
+  }
+  
+  .hash-mark{
+      width: 5px;
+      height: 100%;
+      background: #A82E2D;
+      position: absolute;
+    left:-2.5px;
+  }
+  .twinzer-chart-column{
+    width: 49.5%;
+    background: white;
+    padding:12px;
+    height:322px;
+    overflow-x:auto;
+    max-width:100%;
+    
+  }
+  .twinzer-chart-wrapper{
+    overflow-x: auto;
+    overflow-y: clip;
+    white-space:nowrap;
+  }
+  
+  .twinzer-chart-column .chart-container{
+    width:240px;
+    margin-bottom:0;
+  }
+  
+  @media screen and (max-width:1199px){
+    .comparison-tool-container .inner-row .table-col .twinzer-fin-selector{
+      font-size:12px;
+    }
+    .twinzer-chart-container {
+      font-size:8px;
+    }
+    .twinzer-chart-container span.primary-text{
+      font-size:10px;
+    }
+    .open-product-arrow{
+      height:8px;
+      width:8px;
+    }
+    .twinzer-chart-container h3{
+      font-size:12px;
+    }
+    .comparison-tool-container .inner-row .table-col .twinzer-fin-selector span a{
+      font-size:11px;
+    }
+  }
+  
+  @media screen and (max-width:1023px){
+    .twinzer-fin-selector-container{
+      max-height:350px;
+    }
+    .comparison-tool-container .inner-row .states-col{
+      flex-direction:column-reverse;
+    }
+    .comparison-tool-container .inner-row .twinzer-main-showcase-wrapper{
+      margin-left: 0;
+    }
+    .comparison-tool-container .inner-row .twinzer-main-showcase-wrapper,
+    .comparison-tool-container .inner-row .review-chart-column,
+    .comparison-tool-container .inner-row .table-col,
+    .comparison-tool-container .inner-row .states-col{
+      width:100%;
+    }
+    .comparison-tool-container .inner-row {
+      flex-direction: column;
+    }
+    .twinzer-chart-container{
+      max-width: unset;
+    }
+    .twinzer-chart-container h3{
+      font-size:14px;
+    }
+    .desktop-only{
+      display:none !important;
+    }
+    .compare-selector-header{
+      margin-bottom:12px;
+    }
+    .main-showcase-compare h2{
+      /* display:none; */
+    }
+    #comparison-graph-subheading{
+      /* display:none; */
+    }
+    .comparison-tool-container .inner-row .table-col{
+      /* border-radius: 12px 12px 0 0; */
+    }
+    .comparison-tool-container .inner-row .states-col{
+      /* border-radius: 0 0 12px 12px; */
+    }
+    .twinzer-main-showcase-wrapper{
+      /* border-radius: 8px 8px 0 0; */
+    }
+    .comparison-tool-container .inner-row .review-chart-column{
+      /* border-radius: 0 0 8px 8px; */
+    }
+    .comparison-tool-container .inner-row .review-chart-column{
+    border-right:none;
+    }
+    .twinzer-graphs-wrapper{
+      display:block;
+    }
+    .twinzer-chart-column{
+      height:unset;
+    }
+    .twinzer-main-showcase-wrapper{
+      padding: 12px 0 0;
+    }
+    .comparison-tool-container {
+      padding:12px;
+    }
+    .twinzer-selection-title{
+      margin-left:6px;
+    }
+  }
+  
+  /* Dropdown */
+  
+  
+  
+  @media screen and (max-width:1023px){
+  
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        width:100%;
+        /* border-radius:5px; */
+        /* box-shadow: 0px 4px 4px 0px #8A78781C; */
+        border: 1px solid #D0CFCF;
+    }
+    
+    .dropdown-button {
+        background-color: none;
+        color: black;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        width:100%;
+        border-radius:5px;
+    }
+    
+    .dropdown-button:hover {
+        background-color: rgba(0,0,0,0);
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 2;
+        width:100%;
+    }
+    
+    .dropdown-content a {
+        color: black;
+        text-decoration: none;
+        display: block;
+    }
+    
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .dropdown.show .dropdown-content {
+        display: block;
+    }
+    .twinzer-chart-column{
+      width:100%;
+      margin-top:12px;
+    }
+  }
+  
+  @media screen and (min-width:1024px){
+    .mobile-dropdown{
+      /* display:none; */
+    }
+    .mobile-only{
+      display:none;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "twinzer-Fin Comparison",
+    "settings": [
+      {
+        "type": "product_list",
+        "id": "select-products",
+        "label": "Select Products"
+      }
+    ],
+    "blocks": [
+      {
+       "name": "Fin",
+       "type": "fin",
+       "settings": [
+         {
+          "type": "text",
+          "id": "product_name",
+          "label": "Fin Name",
+          "default": "FA Twin"
+        },
+         {
+          "type": "text",
+          "id": "front_fin_height",
+          "label": "Front Fin Height",
+          "default": "16 inc"
+        },
+         {
+          "type": "text",
+          "id": "front_fin_base",
+          "label": "Front Fin Base",
+          "default": "16 inc"
+        },
+         {
+          "type": "text",
+          "id": "front_fin_area",
+          "label": "Front Fin Area",
+          "default": "16 inc"
+        },
+         {
+          "type": "text",
+          "id": "rear_fin_height",
+          "label": "Rear Fin Height",
+          "default": "16 inc"
+        },
+         {
+          "type": "text",
+          "id": "rear_fin_base",
+          "label": "Rear Fin Base",
+          "default": "16 inc"
+        },
+         {
+          "type": "text",
+          "id": "rear_fin_area",
+          "label": "Rear Fin Area",
+          "default": "16 inc"
+        },
+         {
+          "type": "color",
+          "id": "product_color",
+          "label": "Color",
+          "default": "#000000"
+        },
+         {
+            "type": "image_picker",
+            "id": "front_fin_shape",
+            "label": "Front Fin Shape"
+          },
+         {
+            "type": "image_picker",
+            "id": "rear_fin_shape",
+            "label": "Rear Fin Shape"
+          },
+        {
+          "type": "product",
+          "id": "select-product",
+          "label": "Select Product"
+        },
+         {
+          "type": "number",
+          "id": "attribute_turns",
+          "label": "Attribute Turns",
+          "default": 50
+        },
+         {
+          "type": "number",
+          "id": "attribute_area",
+          "label": "Attribute Area",
+          "default": 50
+        },
+        {
+          "type": "number",
+          "id": "attribute_speed",
+          "label": "Attribute Speed",
+          "default": 50
+        },
+        {
+          "type": "number",
+          "id": "attribute_flex",
+          "label": "Attribute Flex",
+          "default": 50
+        }
+       ]
+     }
+    ]
+  }
+{% endschema %}

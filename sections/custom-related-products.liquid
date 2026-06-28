@@ -1,0 +1,51 @@
+<div id="related-products-section">
+  {%- assign related_products = product.metafields.custom.related_products.value -%}
+  
+  {%- if related_products -%}
+    <div class="index-section">
+      <div class="page-width">
+        <header class="section-header">
+          <h3 class="section-header__title">
+            {{ section.settings.heading }}
+          </h3>
+        </header>
+      </div>
+  
+      <div class="page-width page-width--flush-small">
+        <div class="grid-overflow-wrapper">
+          <div class="grid grid--uniform" data-aos="overflow__animation">
+            {%- for product_ref in related_products -%}
+              {%- assign related_product = all_products[product_ref.handle] -%}
+              {%- if related_product -%}
+                {%- render 'product-grid-item', product: related_product, grid_item_width: 'small--one-half medium-up--one-fifth' -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+<style>
+  
+</style>
+
+{% schema %}
+{
+  "name": "Custom Related Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "You may also like"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Related Products",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

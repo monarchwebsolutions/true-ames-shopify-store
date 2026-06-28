@@ -1,0 +1,121 @@
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabSections = document.querySelectorAll(".tab-section");
+  
+    tabButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        // Remove 'active' class from all buttons and sections
+        tabButtons.forEach(btn => btn.classList.remove("active"));
+        tabSections.forEach(section => section.classList.remove("active"));
+  
+        // Add 'active' class to the clicked button and corresponding section
+        button.classList.add("active");
+        const target = button.getAttribute("data-tab");
+        document.getElementById(target).classList.add("active");
+      });
+    });
+  });
+
+</script>
+<script src="{{ 'compare.js' | asset_url }}" defer="defer"></script>
+<div class="page-width page-content">
+
+	<div class="grid">
+    <div class="grid__item medium-up--three-quarters medium-up--push-one-eighth">
+
+      {%- render 'breadcrumbs' -%}
+
+      <header class="section-header">
+        <h1 class="section-header__title">{{ page.title }}</h1>
+      </header>
+
+      <div class="rte rte--nomargin">
+        {{ page.content }}
+      </div>
+
+    </div>
+  </div>
+  <div class="tab-container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="twin-fins"><strong>Twin Fins</strong></button>
+      <button class="tab-button" data-tab="tri-fins"><strong>Tri Fins</strong></button>
+      <button class="tab-button" data-tab="quad-fins"><strong>Quad Fins</strong></button>
+      <button class="tab-button" data-tab="twinzer-fins"><strong>Twinzer Fins</strong></button>
+      <button class="tab-button" data-tab="trailer-fins"><strong>Trailer Fins</strong></button>
+      <button class="tab-button" data-tab="side-bite-fins"><strong>Side Bites</strong></button>
+    </div>
+  
+    <!-- Sections -->
+    <div class="tab-content">
+      <div id="twin-fins" class="tab-section active">
+        {%- section 'fin-comparison' -%}
+      </div>
+      <div id="tri-fins" class="tab-section">
+        {%- section 'tri-fin-comparison' -%}
+      </div>
+      <div id="quad-fins" class="tab-section">
+        {%- section 'quad-fin-comparison' -%}
+      </div>
+      <div id="twinzer-fins" class="tab-section">
+        {%- section 'twinzer-fin-comparison' -%}
+      </div>
+      <div id="trailer-fins" class="tab-section">
+        {%- section 'fin-comparison-trailer' -%}
+      </div>
+      <div id="side-bite-fins" class="tab-section">
+        {%- section 'fin-comparison-side-bite' -%}
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  /* Tab container styling */
+  .tab-container {
+    margin: 20px 0;
+  }
+  
+  /* Tabs styling */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 10px;
+  }
+  
+  .tab-button {
+    padding: 10px 10px;
+    border-right: none;
+    background: #f8f8f8;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+  
+  .tab-button.active {
+    background: #ffffff;
+    border: 2px solid #ddd;
+    border-bottom: none;
+    font-weight: bold;
+  }
+  
+  /* Sections styling */
+  .tab-content .tab-section {
+    display: none;
+  }
+  
+  .tab-content .tab-section.active {
+    display: block;
+  }
+
+  @media screen and (max-width:480px){
+    .tab-button{
+      margin-right:0;
+      max-width: 24%;
+    }
+    .tab-container .tabs{
+      justify-content:space-between;
+    }
+  }
+
+</style>

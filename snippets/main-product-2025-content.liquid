@@ -1,0 +1,686 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+
+  unless thumbnail_position
+    assign thumbnail_position = 'beside'
+  endunless
+
+  unless description_style
+    assign description_style = 'full'
+  endunless
+
+  assign product_zoom_size = '1800x1800'
+  assign product_image_size = '620x'
+
+  case image_container_width
+    when 'small'
+      assign product_image_width = 'medium-up--two-fifths'
+      assign product_description_width = 'medium-up--three-fifths'
+      assign product_image_size = '480x'
+    when 'medium'
+      assign product_image_width = 'medium-up--one-half'
+      assign product_description_width = 'medium-up--one-half'
+      assign product_image_size = '620x'
+    when 'large'
+      assign product_image_width = 'medium-up--three-fifths'
+      assign product_description_width = 'medium-up--two-fifths'
+      assign product_image_size = '740x'
+  endcase
+
+  assign product_img_structure = product.featured_media | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+-%}
+
+<div id="ProductSection-{{ section_id }}"
+  class="product-section"
+  data-section-id="{{ section_id }}"
+  data-section-type="product-template"
+  data-product-handle="{{ product.handle }}"
+  data-product-title="{{ product.title | escape }}"
+  data-product-url="{{ product.url | within: collection }}"
+  data-aspect-ratio="{{ 100 | divided_by: product.featured_media.aspect_ratio }}"
+  data-img-url="{{ product_img_structure }}"
+  {% if settings.product_zoom_enable %}
+    data-image-zoom="true"
+  {% endif %}
+  {% if settings.inventory_enable %}
+    data-inventory="true"
+  {% endif %}
+  {% if settings.inventory_transfers_enable %}
+    data-incoming-inventory="true"
+  {% endif %}
+  {% unless isModal %}
+    data-enable-history-state="true"
+  {% endunless %}>
+
+  {%- render 'product-template-variables', product: product, current_variant: current_variant -%}
+
+  <div class="page-content page-content--product">
+    <div class="page-width">
+
+      <div class="grid{% unless image_position == 'left' %} grid--product-images-right{% endunless %}">
+        {%- if image_position == 'left' -%}
+          <div class="grid__item {{ product_image_width }} product-single__sticky">
+            {%- render 'product-images',
+              section_id: section_id,
+              product: product,
+              isModal: isModal,
+              image_position: image_position,
+              product_zoom_size: product_zoom_size,
+              product_image_size: product_image_size,
+              thumbnail_arrows: thumbnail_arrows,
+              thumbnail_position: thumbnail_position,
+              video_looping: video_looping,
+              video_style: video_style
+            -%}
+          </div>
+        {%- endif -%}
+
+        <div class="grid__item {{ product_description_width }}">
+
+          <div class="product-single__meta">
+            {%- if settings.show_breadcrumbs and isModal != true -%}
+              {%- render 'breadcrumbs' -%}
+            {%- endif -%}
+
+            {%- if settings.vendor_enable -%}
+              <div class="product-single__vendor">
+                {%- assign vendor_handle = product.vendor | handleize -%}
+                {%- if collections[vendor_handle] != empty -%}
+                  <a href="{{ routes.collections_url }}/{{ collections[vendor_handle].handle }}">
+                    {{ collections[vendor_handle].title }}
+                  </a>
+                {%- else -%}
+                  {{ product.vendor | link_to_vendor }}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- if isModal -%}
+              <p class="h2 product-single__title">
+                {{ product.title }}
+              </p>
+            {%- else -%}
+              <h1 class="h2 product-single__title">
+                {{ product.title }}
+              </h1>
+            {%- endif -%}
+
+            {%- if settings.enable_product_reviews and settings.reviews_layout == 'full' -%}
+              {%- liquid
+                if isModal
+                  assign review_link = product.url | within: collection | append: '#Reviews-' | append: product.id
+                else
+                  assign review_link = '#Reviews-' | append: product.id
+                endif
+              -%}
+              <a href="{{ review_link }}" class="product-single__review-link">
+                <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+              </a>
+            {%- endif -%}
+
+            {%- if settings.sku_enable -%}
+              <p id="Sku-{{ section_id }}" class="product-single__sku">
+                {%- if current_variant.sku -%}
+                  {{ current_variant.sku }}
+                {%- endif -%}
+              </p>
+            {%- endif -%}
+
+            {%- assign hide_sale_price = true -%}
+            {%- if product.compare_at_price_max > product.price -%}
+              {%- if current_variant.compare_at_price > current_variant.price -%}
+                {%- assign hide_sale_price = false -%}
+              {%- endif -%}
+              <span
+                id="PriceA11y-{{ section_id }}"
+                class="visually-hidden"
+                aria-hidden="{{ hide_sale_price }}">
+                  {{ 'products.general.regular_price' | t }}
+              </span>
+              <span class="product__price-wrap-{{ section_id }}{% if hide_sale_price %} hide{% endif %}">
+                <span id="ComparePrice-{{ section_id }}" class="product__price product__price--compare">
+                  {%- if current_variant.compare_at_price > current_variant.price -%}
+                    {{ current_variant.compare_at_price | money }}
+                  {%- endif -%}
+                </span>
+              </span>
+              <span id="ComparePriceA11y-{{ section_id }}" class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+            {%- else -%}
+              <span id="PriceA11y-{{ section_id }}" class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+            {%- endif -%}
+
+            <span id="ProductPrice-{{ section_id }}"
+              class="product__price{% if current_variant.compare_at_price > current_variant.price %} on-sale{% endif %}">
+              {{ current_variant.price | money }}
+            </span>
+
+            {%- if settings.product_save_amount -%}
+              {%- if settings.product_save_type == 'dollar' -%}
+                {%- capture saved_amount -%}{{ current_variant.compare_at_price | minus: current_variant.price | money }}{%- endcapture -%}
+              {%- else -%}
+                {%- capture saved_amount -%}{{ current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round }}%{%- endcapture -%}
+              {%- endif -%}
+              <span id="SavePrice-{{ section_id }}" class="product__price-savings{% if hide_sale_price %} hide{% endif %}">
+                {%- unless hide_sale_price -%}
+                  {{ 'products.general.save_html' | t: saved_amount: saved_amount }}
+                {%- endunless -%}
+              </span>
+            {%- endif -%}
+
+            <div class="product__unit-price product__unit-price--spacing product__unit-price-wrapper--{{ section_id }}{% unless current_variant.unit_price_measurement %} hide{% endunless %}">
+              {%- capture unit_price_base_unit -%}
+                <span class="product__unit-base--{{ section_id }}">
+                  {%- if current_variant.unit_price_measurement -%}
+                    {%- if current_variant.unit_price_measurement.reference_value != 1 -%}
+                      {{ current_variant.unit_price_measurement.reference_value }}
+                    {%- endif -%}
+                    {{ current_variant.unit_price_measurement.reference_unit }}
+                  {%- endif -%}
+                </span>
+              {%- endcapture -%}
+
+              <span class="product__unit-price--{{ section_id }}">{{ current_variant.unit_price | money }}</span>/{{ unit_price_base_unit }}
+            </div>
+
+            {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+              <div class="product__policies rte small--text-center">
+                <small>
+                  {%- if shop.taxes_included -%}
+                    {{ 'products.product.include_taxes' | t }}
+                  {%- endif -%}
+                  {%- if shop.shipping_policy.body != blank -%}
+                    {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                  {%- endif -%}
+                </small>
+              </div>
+            {%- endif -%}
+
+            {%- if settings.inventory_enable or settings.inventory_transfers_enable -%}
+              {%- assign variants_with_inventory_tracking = product.variants | where: 'inventory_management', 'shopify' -%}
+
+              <script>
+                // Store inventory quantities in JS because they're no longer
+                // available directly in JS when a variant changes.
+                // Have an object that holds all potential products so it works
+                // with quick view or with multiple featured products.
+                window.inventories = window.inventories || {};
+                window.inventories['{{section_id}}'] = {};
+                 {% for variant in variants_with_inventory_tracking %}
+                  window.inventories['{{section_id}}'][{{variant.id}}] = {
+                    'quantity': {{ variant.inventory_quantity | default: 0 }},
+                    'incoming': {{ variant.incoming | default: false | json }},
+                    'next_incoming_date': {{ variant.next_incoming_date | date: format: 'date' | json }}
+                  };
+                 {% endfor %}
+              </script>
+
+              {% comment %}
+                If loaded in quick view, it might be from a JS-loaded function
+                that loads recommended products. If that's the case, the above
+                JS will not set the variant inventory. Add it to an accessible
+                data div to read later instead.
+              {% endcomment %}
+              {%- if isModal -%}
+                <div
+                  data-section-id="{{ section_id }}"
+                  class="hide js-product-inventory-data"
+                  aria-hidden="true"
+                  >
+                  {%- for variant in variants_with_inventory_tracking -%}
+                    <div
+                      class="js-variant-inventory-data"
+                      data-id="{{ variant.id }}"
+                      data-quantity="{{ variant.inventory_quantity | default: 0 }}"
+                      data-incoming="{{ variant.incoming | default: false | json }}"
+                      data-date="{{ variant.next_incoming_date | date: format: 'date' | json }}"
+                    >
+                    </div>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+            {%- form 'product', product, id: form_id -%}
+              {% comment %}
+                Automatically inserted by Shop Pay Installments theme updater
+              {% endcomment %}
+              {% unless settings.disable_autogenerated_payment_terms %}
+                {{ form | payment_terms }}
+              {% endunless %}
+            {% endform %}
+            <hr class="hr--small">
+            <div class="product-description">
+              {{ product.description }}
+            </div>
+            <hr class="hr--small">
+            {%- unless isModal -%}
+              {% comment %}
+                Shopify's product form attaches a number of tracking
+                scripts that cause slower load times and false statistics.
+                Quick view modals request these on-demand.
+              {% endcomment %}
+              {%- render 'product-form',
+                section_id: section_id,
+                product: product,
+                current_variant: current_variant
+              -%}
+            {%- else -%}
+              <div
+                id="ProductFormHolder-{{ section_id }}"
+                class="product-form-holder"
+                data-url="{{ product.url }}"
+                data-template="{{ product.template_suffix }}"></div>
+            {%- endunless -%}
+
+            {%- unless isModal -%}
+              {%- if settings.surface_pickup_enable -%}
+                <div id="StoreAvailabilityHolder-{{ section_id }}"
+                  data-product-name="{{ product.title | escape }}"
+                  data-base-url="{{ shop.url }}{{ routes.root_url }}"
+                  ></div>
+              {%- endif -%}
+            {%- endunless -%}
+
+            {%- if settings.trust_image != blank -%}
+              <div class="aos-animate trust-image" style="max-width: {{ settings.trust_image.width }}px;">
+                <div class="image-wrap " style="height: 0; padding-bottom: {{ 100 | divided_by: settings.trust_image.aspect_ratio }}%;">
+                  {%- assign img_url = settings.trust_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                  <img class="lazyload"
+                      data-src="{{ img_url }}"
+                      data-widths="[360, 540, 700, 1024]"
+                      data-aspectratio="{{ settings.trust_image.aspect_ratio }}"
+                      data-sizes="auto"
+                      alt="{{ settings.trust_image.alt }}">
+                  <noscript>
+                    <img class="lazyloaded" src="{{ settings.trust_image | img_url: '540x' }}" alt="{{ settings.trust_image.alt }}">
+                  </noscript>
+                </div>
+              </div>
+            {%- endif -%}
+
+            {%- unless description_style == 'full' -%}
+              <div class="product-single__description rte">
+                <div class="product-dropdowns">
+                  <details>
+                    <summary><strong>FORM, FUNCTION & FEEL</strong></summary>
+                    <div class="dropdown-content form-function-dropdown">
+                      <div id="tri-chart-wrapper-chart-5" class="chart-container">
+                       <div class="chart-header">
+                          <h3>{{ product.title }}</h3>
+                       </div>
+                       <div class="progress-bar">
+                          <div class="fill" style="width: {{ product.metafields.custom.upright_to_raked }}%;"></div>
+                          <div class="hash-mark" style="margin-left: {{ product.metafields.custom.upright_to_raked }}%;"></div>
+                       </div>
+                       <div class="bar-text"><span class="text-left"><span class="primary-text">Upright </span>Tight Turns</span><span class="text-right"><span class="primary-text">Raked </span>Drawn-Out Turns</span></div>
+                       <div class="progress-bar">
+                          <div class="fill" style="width: {{ product.metafields.custom.less_area_to_more_area }}%;"></div>
+                          <div class="hash-mark" style="margin-left: {{ product.metafields.custom.less_area_to_more_area }}%;"></div>
+                       </div>
+                       <div class="bar-text"><span class="text-left"><span class="primary-text">Less Area </span>Loose</span><span class="text-right"><span class="primary-text">More Area </span>Stable</span></div>
+                       <div class="progress-bar">
+                          <div class="fill" style="width: {{ product.metafields.custom.speed_control_to_speed_generating }}%;"></div>
+                          <div class="hash-mark" style="margin-left: {{ product.metafields.custom.speed_control_to_speed_generating }}%;"></div>
+                       </div>
+                       <div class="bar-text"><span class="text-left"><span class="primary-text">Speed Control </span></span><span class="text-right"><span class="primary-text">Speed Generating </span>Drive</span></div>
+                       <div class="progress-bar">
+                          <div class="fill" style="width: {{ product.metafields.custom.less_flex_to_more_flex }}%;"></div>
+                          <div class="hash-mark" style="margin-left: {{ product.metafields.custom.less_flex_to_more_flex }}%;"></div>
+                       </div>
+                       <div class="bar-text"><span class="text-left"><span class="primary-text">Less Flex </span>Responsive</span><span class="text-right"><span class="primary-text">More Flex </span>Projection</span></div>
+                      </div>
+                      <div class="text-attribute"><span class="bold caps">Form |</span> {{ product.metafields.custom.form }}</div>
+                      <div class="text-attribute"><span class="bold caps">Function |</span> {{ product.metafields.custom.function }}</div>
+                      <div class="text-attribute"><span class="bold caps">Feel |</span> {{ product.metafields.custom.feel }}</div>
+                      <div class="text-attribute"><span class="bold caps">Overall |</span> {{ product.metafields.custom.overall }}</div>
+                    </div>
+                  </details>
+            
+                  <details>
+                    <summary><strong>SPECIFICATIONS</strong></summary>
+                    <div class="dropdown-content">
+                      {% assign specs = product.metafields.custom.specifications.value | parse_json %}
+                      {% if specs.size > 0 %}
+                        <div class="specs-table-wrapper">
+                          <table class="specs-table">
+                            <thead>
+                              <tr>
+                                <th>SIZE</th>
+                                <th>HEIGHT</th>
+                                <th>BASE</th>
+                                <th>AREA</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for spec in specs %}
+                                <tr>
+                                  <td>{{ spec.size }}</td>
+                                  <td>{{ spec.height }}</td>
+                                  <td>{{ spec.base }}</td>
+                                  <td>{{ spec.area }}</td>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      {% endif %}
+
+                    </div>
+                  </details>
+            
+                  <details>
+                    <summary><strong>MATERIALS & FITMENT</strong></summary>
+                    <div class="dropdown-content">
+                      <div class="text-attribute"><span class="bold caps">Construction |</span> {{ product.metafields.custom.construction }}</div>
+                      <div class="text-attribute"><span class="bold caps">Finish |</span> {{ product.metafields.custom.finish }}</div>
+                      <div class="text-attribute"><span class="bold caps">Fitment |</span> {{ product.metafields.custom.fitment }}</div>
+                      <div class="text-attribute"><span class="bold caps">Application |</span> {{ product.metafields.custom.application }}</div>
+                    </div>
+                  </details>
+            
+                  <details>
+                    <summary><strong>WHY YOU’LL LOVE THIS FIN</strong></summary>
+                    <div class="dropdown-content">
+                      <ul class="feature-list">
+                        {% if product.metafields.custom.feature_1 %}
+                          <li>{{ product.metafields.custom.feature_1.value }}</li>
+                        {% endif %}
+                        {% if product.metafields.custom.feature_2 %}
+                          <li>{{ product.metafields.custom.feature_2.value }}</li>
+                        {% endif %}
+                        {% if product.metafields.custom.feature_3 %}
+                          <li>{{ product.metafields.custom.feature_3.value }}</li>
+                        {% endif %}
+                      </ul>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            
+              {%- render 'product-additional-content', product: product, section_id: section_id -%}
+            {%- endunless -%}
+
+
+            {%- if social -%}
+              {%- render 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product -%}
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- unless image_position == 'left' -%}
+          <div class="grid__item {{ product_image_width }} product-single__sticky">
+            {%- render 'product-images',
+              section_id: section_id,
+              product: product,
+              isModal: isModal,
+              image_position: image_position,
+              product_zoom_size: product_zoom_size,
+              product_image_size: product_image_size,
+              thumbnail_arrows: thumbnail_arrows,
+              thumbnail_position: thumbnail_position,
+              video_looping: video_looping,
+              video_style: video_style
+            -%}
+          </div>
+        {%- endunless -%}
+      </div>
+
+      {%- if description_style == 'full' -%}
+        <div class="product-single__description-full rte">
+          DROPDOWNS GO HERE 2
+        </div>
+
+        {%- render 'product-additional-content', product: product, section_id: section_id -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+<script>
+function styleInstallments() {
+  const elements = document.querySelectorAll('shopify-payment-terms');
+
+  elements.forEach(el => {
+    if (!el.shadowRoot) return;
+
+    const shadow = el.shadowRoot;
+
+    if (shadow.querySelector('#custom-installment-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'custom-installment-style';
+
+    style.textContent = `
+      #shopify-installments-content,
+      #prequalBackupCTA,
+      #shopify-installments-content * {
+        font-family: "franklin-gothic-atf", sans-serif !important;
+        font-size: 12px;
+      }
+
+      .text-purple-primary svg {
+        color: black !important;
+        fill: black !important;
+      }
+    `;
+
+    shadow.appendChild(style);
+  });
+}
+
+function waitForInstallments() {
+  const interval = setInterval(() => {
+    const el = document.querySelector('shopify-payment-terms');
+
+    if (el && el.shadowRoot) {
+      styleInstallments();
+      clearInterval(interval);
+    }
+  }, 100);
+}
+
+document.addEventListener('DOMContentLoaded', waitForInstallments);
+
+new MutationObserver(styleInstallments).observe(document.body, {
+  childList: true,
+  subtree: true
+});
+</script>
+<style>
+  /* Wrapper spacing and layout */
+.product-dropdowns {
+  margin-top: 2rem;
+}
+
+/* Style each dropdown container */
+.product-dropdowns details {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-dropdowns details[open] {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Style the summary line */
+.product-dropdowns summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  list-style: none;
+  position: relative;
+  padding-right: 1.5rem;
+  user-select: none;
+}
+
+/* Hide the native disclosure triangle */
+.product-dropdowns summary::marker,
+.product-dropdowns summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Custom arrow */
+.product-dropdowns summary::after {
+  content: "▾"; /* Down arrow */
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+  position: absolute;
+  right: 0;
+}
+
+/* Rotate arrow when open */
+.product-dropdowns details[open] summary::after {
+  transform: rotate(180deg); /* Upward arrow */
+}
+
+/* Inner content styling */
+.product-dropdowns .dropdown-content {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Core Styles */
+.chart-container {
+  width: 100%;
+  font-size: 10px;
+  padding: 10px;
+  border: 1px solid #898989;
+  border-radius: 0px;
+  margin-bottom: 12px;
+}
+
+.chart-container h3 {
+  display: inline-block;
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.chart-header {
+  border-bottom: 1px solid rgba(137, 137, 137, 0.3);
+  padding-bottom: 3px;
+  margin-bottom: 8px;
+}
+
+.chart-color-box {
+  height: 10px;
+  width: 10px;
+  display: inline-block;
+  position: relative;
+  margin-right: 5px;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  margin: 5px 0 0;
+  border: 2px solid #232323;
+  background-size: contain;
+  overflow: hidden;
+  position: relative;
+  height: 16px;
+}
+
+.progress-bar .fill {
+  background: transparent;
+  height: 100%;
+  width: 0%;
+  transition: width 0.5s;
+  border-radius: 12px;
+}
+
+.hash-mark {
+  width: 7px;
+  height: 100%;
+  background: #A82E2D;
+  position: absolute;
+  left: -2.5px;
+}
+
+.chart-container .bar-text {
+  display: flow-root;
+}
+
+.chart-container span {
+  color: #898989;
+}
+
+.chart-container span.primary-text {
+  font-size: 12px;
+  color: #39394a;
+}
+
+.chart-container span.text-left {
+  float: left;
+}
+
+.chart-container span.text-right {
+  float: right;
+}
+.dropdown-content .caps{
+  margin-bottom:6px;
+}
+.specs-table th{
+  text-align:center;
+}
+.product-description{
+  font-size:16px;
+  font-weight:400;
+}
+.product-single__title,
+.btn span,
+.product-dropdowns strong,
+.chart-header h3,
+.dropdown-content .bold,
+.specs-table th,
+.product__price{
+  font-weight:600 !important;
+}
+.text-attribute,
+.specs-table,
+.feature-list li,
+.product-description,
+.breadcrumb a{
+  font-weight:300 !important;
+}
+.product-description {
+  font-size: 16px;
+}
+.product-single__meta{
+  padding:0;
+}
+/* Responsive Styles */
+@media screen and (max-width: 1199px) {
+  .chart-container {
+    font-size: 8px;
+  }
+
+  .chart-container span.primary-text {
+    font-size: 10px;
+  }
+
+  .chart-container h3 {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .chart-container {
+    max-width: unset;
+  }
+
+  .chart-container h3 {
+    font-size: 14px;
+  } 
+  .specs-table{
+    font-size:14px;
+  }
+}
+
+
+</style>

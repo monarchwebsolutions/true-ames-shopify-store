@@ -1,0 +1,45 @@
+<div class="site-nav">
+  <div class="site-nav__icons">
+    {%- if shop.customer_accounts_enabled -%}
+      <a class="site-nav__link site-nav__link--icon small--hide" href="{% if customer %}{{ routes.account_url }}{% else %}https://shopify.com/3394613/account{% endif %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span class="icon__fallback-text">
+          {%- if customer -%}
+            {{ 'layout.customer.account' | t }}
+          {%- else -%}
+            {{ 'layout.customer.log_in' | t }}
+          {%- endif -%}
+        </span>
+      </a>
+    {%- endif -%}
+
+    {%- if settings.search_enable -%}
+      <a href="{{ routes.search_url }}" class="site-nav__link site-nav__link--icon js-search-header{% if section.settings.main_menu_alignment == 'center' or section.settings.main_menu_alignment == 'center-split' %} medium-up--hide{% endif %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span class="icon__fallback-text">{{ 'general.search.title' | t }}</span>
+      </a>
+    {%- endif -%}
+
+    {%- if section.settings.main_menu_alignment == 'left' or section.settings.main_menu_alignment == 'left-center' or section.settings.main_menu_alignment == 'left-drawer' -%}
+      <button
+        type="button"
+        class="site-nav__link site-nav__link--icon js-drawer-open-nav{% if section.settings.main_menu_alignment == 'left' or section.settings.main_menu_alignment == 'left-center' %} medium-up--hide{% endif %}"
+        aria-controls="NavDrawer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <span class="icon__fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+      </button>
+    {%- endif -%}
+
+    <a href="{{ routes.cart_url }}" class="site-nav__link site-nav__link--icon js-drawer-open-cart" aria-controls="CartDrawer" data-icon="{{ settings.cart_icon }}">
+      <span class="cart-link">
+        {%- if settings.cart_icon == 'cart' -%}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        {%- else -%}
+          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-bag" viewBox="0 0 64 64"><g fill="none" stroke="#000" stroke-width="2"><path d="M25 26c0-15.79 3.57-20 8-20s8 4.21 8 20"/><path d="M14.74 18h36.51l3.59 36.73h-43.7z"/></g></svg>
+        {%- endif -%}
+        <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
+        <span class="cart-link__bubble{% if cart.item_count > 0 %} cart-link__bubble--visible{% endif %}"></span>
+      </span>
+    </a>
+  </div>
+</div>

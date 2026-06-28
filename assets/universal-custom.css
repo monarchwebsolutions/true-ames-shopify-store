@@ -1,0 +1,37 @@
+.bold{
+  font-weight: bold;
+}
+.caps{
+  text-transform: uppercase;
+}
+.product-badges {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 2%;
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+}
+
+/* Dynamically size badges based on count */
+.product-badge {
+  flex: 0 0 calc((100% - (var(--badge-count) - 1) * 2%) / var(--badge-count));
+  text-align: center;
+}
+
+/* Optional styling */
+.product-badge img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.badge-title {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}

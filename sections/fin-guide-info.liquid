@@ -1,0 +1,106 @@
+<div class="index-section">
+  <div class="fin-guide-info page-width">
+    <div class="fin-guide-inner">
+      <!-- Main Image -->
+      <div class="fin-guide-image">
+        <a href="/blogs/true-ames-fins/choose-the-right-surfboard-fins">
+          <img src="{{ section.settings.main_image | img_url: '800x' }}" alt="Main fin guide image">
+        </a>
+      </div>
+
+      <!-- Text + Diagrams -->
+      <div class="fin-guide-text-block">
+        <h2>How to Choose the Right Fins</h2>
+        <p>
+          Whether you’re new to exploring the benefits of experimenting with new fins, or you’re a seasoned veteran... our fin guide will break down the basics, as well as some of the more complicated aspects of fin design to help ensure that you find the right setup for your board. Learn about different fin types, terminology, as well as some of the crucial factors that ultimately determine feel and performance <strong><a href="/blogs/true-ames-fins/choose-the-right-surfboard-fins">here</a></strong>.
+        </p>
+        <div class="fin-guide-diagram">
+          <img src="{{ section.settings.diagram_image | img_url: '800x' }}" alt="Fin guide diagram">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fin-guide-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin: auto;
+    align-items: stretch;
+  }
+
+  .fin-guide-image {
+    width: calc(50% - 20px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .fin-guide-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .fin-guide-text-block {
+    width: calc(50% - 20px);
+    display: flex;
+    flex-direction: column;
+    gap:0;
+    justify-content:space-between;
+  }
+
+  .fin-guide-text-block h2 {
+    font-size: 24px;
+    font-weight: 600 !important;
+  }
+
+  .fin-guide-text-block p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .fin-guide-diagram img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media screen and (max-width: 1023px) {
+    .fin-guide-inner {
+      flex-direction: column;
+      margin:auto;
+    }
+    .fin-guide-image {
+       width:100%
+    }
+    .fin-guide-text-block {
+      width:100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Fin Guide Info",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Main Image (Surfboards)"
+    },
+    {
+      "type": "image_picker",
+      "id": "diagram_image",
+      "label": "Fin Diagram Image (Template, Area, Rake, Flex)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fin Guide Info"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,6 @@
+{%comment%}
+nofollow if product contains 'noindex' tag
+{%endcomment%}
+{% if product.tags contains "noindex"%}
+  <meta name="robots" content="noindex" />
+{% endif %}

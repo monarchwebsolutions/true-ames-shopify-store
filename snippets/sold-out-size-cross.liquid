@@ -1,0 +1,113 @@
+<script>
+(function () {
+  const product = {{ product | json }};
+  const FIRST_AVAILABLE_VARIANT_ID = {{ product.first_available_variant.id | json }};
+  const variants = product.variants || [];
+  const byId = new Map(variants.map(v => [v.id, v]));
+
+  function returnVariantIdFromUrl() {
+    const id = new URLSearchParams(location.search).get('variant');
+    return id ? Number(id) : null;
+  }
+
+  function getSoldOutSizesForVariantId(variantId) {
+    const currentVariant = byId.get(variantId);
+    if (!currentVariant) return [];
+
+    const relatedIds = currentVariant?.featured_image?.variant_ids || [];
+    const sold_out_variants = relatedIds.filter(id => {
+      const v = byId.get(Number(id));
+      return v && Number(v.inventory_quantity) < 1;
+    });
+
+    const sold_out_sizes = sold_out_variants
+      .map(id => byId.get(Number(id))?.option1 || null)
+      .filter(Boolean);
+
+    return sold_out_sizes;
+  }
+
+  function applySoldOutSizeClasses(soldOutSizes) {
+    const fieldset = document.querySelector('fieldset[data-handle="size"]');
+    if (!fieldset) return;
+
+    fieldset.querySelectorAll('div.variant-input').forEach(div => {
+      const val =
+        div.getAttribute('data-value') ||
+        div.getAttribute('value') ||
+        (div.querySelector('input') ? div.querySelector('input').value : null);
+
+      const isSoldOut = val && soldOutSizes.includes(String(val));
+      div.classList.toggle('size-disabled', Boolean(isSoldOut));
+    });
+  }
+
+  function disableAllSizes() {
+    const fieldset = document.querySelector('fieldset[data-handle="size"]');
+    if (!fieldset) return;
+    fieldset.querySelectorAll('div.variant-input').forEach(div => {
+      div.classList.add('size-disabled');
+    });
+  }
+
+  function runForVariantId(variantId) {
+    if (!variantId) {
+      console.log('No first_available_variant — disabling all sizes');
+      disableAllSizes();
+      return;
+    }
+
+    const sizes = getSoldOutSizesForVariantId(variantId);
+    applySoldOutSizeClasses(sizes);
+  }
+
+  // ---- INIT ----
+  function init() {
+    // Use URL variant if present; otherwise first_available_variant
+    const urlVariantId = returnVariantIdFromUrl();
+    const variantToUse = urlVariantId || FIRST_AVAILABLE_VARIANT_ID;
+    runForVariantId(variantToUse);
+
+    // After color swatch click: use ?variant= (fallback to first_available if missing)
+    document.addEventListener('click', e => {
+      if (e.target.closest('label.color-swatch')) {
+        setTimeout(() => {
+          const vid = returnVariantIdFromUrl() || FIRST_AVAILABLE_VARIANT_ID;
+          runForVariantId(vid);
+        }, 100);
+      }
+    });
+
+    // Back/forward
+    window.addEventListener('popstate', () => {
+      const vid = returnVariantIdFromUrl() || FIRST_AVAILABLE_VARIANT_ID;
+      runForVariantId(vid);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+
+<style>
+  /* optional visual */
+  fieldset[data-handle="size"] .variant-input.size-disabled label {
+    position: relative;
+    opacity: 0.5;
+    {% comment %} pointer-events: none; {% endcomment %}
+  }
+  fieldset[data-handle="size"] .variant-input.size-disabled label::after {
+    content: "";
+    position: absolute;
+    left: -6px; right: -6px;
+    top: 50%;
+    height: 2px;
+    transform: rotate(-45deg);
+    background: currentColor;
+  }
+</style>
