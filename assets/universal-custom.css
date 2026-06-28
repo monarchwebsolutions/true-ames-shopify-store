@@ -11,12 +11,13 @@
   gap: 2%;
   position: absolute;
   z-index: 1;
-  top: 20px;
+  top: 0;
 }
 
 /* Dynamically size badges based on count */
 .product-badge {
   flex: 0 0 calc((100% - (var(--badge-count) - 1) * 2%) / var(--badge-count));
+  max-width: 33%;
   text-align: center;
 }
 
