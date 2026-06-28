@@ -93,30 +93,7 @@
 
 <div{% if showPageData %} data-page="{{page}}"{% endif %} class="grid__item grid-product {{ grid_item_width }} aos-init aos-animate {% if settings.quick_shop_enable %} grid-product__has-quick-shop{% endif %}" data-aos="row-of-{{ per_row }}" data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}">
     <div class="grid-product__content">
-    {% assign badges = product.metafields.custom.product_badges.value %}
-    {% if badges != blank %}
-      {% assign badge_count = badges.size %}
-      {% if badge_count > 3 %}
-        {% assign badge_count = 3 %}
-      {% endif %}
-      <div class="product-badges" style="--badge-count: {{ badge_count }}">
-        {% for badge in badges limit:3 %}
-          {% assign badge_icon = badge.icon.value | default: badge.icon %}
-          {% assign badge_title = badge.title.value | default: badge.title %}
-          <div class="product-badge">
-            {% if badge_icon %}
-              <img
-                height=50
-                width=auto
-                src="{{ badge_icon | image_url: width: 100 }}"
-                alt="{{ badge_title | escape }}"
-                loading="lazy"
-              >
-            {% endif %}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
+    <div class="product-badges"></div>
     {%- if has_custom_label -%}
         <div class="grid-product__tag grid-product__tag--custom">
             {{ custom_label }}
